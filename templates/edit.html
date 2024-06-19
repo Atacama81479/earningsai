@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form, render_field %}
+{% block content %}
+
+
+      <h1 class="pt-5 pb-2">EarningsAI</h1>
+
+      <p class="lead">This is the backoffice settings page where the queries can be managed </p>
+
+      <hr>
+
+          <div>
+
+            <a href= / > 
+                <button class="GFG"> 
+                    Zurück
+                </button> 
+
+            <table id="data" class="table table-striped">
+                <thead>
+                    <tr>
+                        <td>id</td>
+                        <td>name</td>
+                        <td>content</td>
+                        <td>Spreadsheet Cell</td>
+                    </tr>
+                </thead>
+            <tbody>
+                {% for x in all_prompts %}
+                <tr>
+                    <td>{{x.id}}</td>
+                    <td>{{x.name}}</td>
+                    <td>{{x.content}}</td>
+                    <td>{{x.gsheetcell}}</td>
+                    <td> <a href= edit/{{x.id}}> 
+                        <button class="GFG"> 
+                            Edit
+                        </button> 
+                    </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+          </div>
+
+      {% endblock %}
