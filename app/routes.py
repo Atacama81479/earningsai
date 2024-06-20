@@ -74,6 +74,10 @@ def updatesettings():
         settings.gsheetname = form.gsheetname.data
         settings.gsheetno = form.gsheetno.data
         settings.indexname = form.indexname.data
+        settings.llm = form.llm.data
+        settings.embedding = form.embedding.data
+        settings.rag_prompt = form.RAG_Prompt.data
+
         db.session.commit()
         flash('Your changes have been saved.')
 
