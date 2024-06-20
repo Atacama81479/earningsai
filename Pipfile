@@ -18,6 +18,7 @@ wtforms = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
 bootstrap-flask = "*"
+gunicorn = "*"
 
 [dev-packages]
 
