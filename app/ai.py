@@ -17,6 +17,7 @@ from langchain_core.runnables import RunnablePassthrough
 def Createsummary(settings, query_set):
 
     load_dotenv()
+    Gcredentialpath = os.getenv('PATH_TO_CREDENTIALS') 
     gsheetnr = int(settings.gsheetno)
     gsheetname = settings.gsheetname
     indexname = settings.indexname
@@ -50,7 +51,7 @@ def Createsummary(settings, query_set):
     vectorstore = PineconeVectorStore(index_name= indexname, embedding=embeddings)
 
     print("connect with google...")
-    gc = pygsheets.authorize(service_file='app/Gcredentials.json')
+    gc = pygsheets.authorize(service_file= Gcredentialpath)
     sheet= gc.open(gsheetname)
 
 
