@@ -84,8 +84,18 @@ def Createsummary(settings, query_set):
 
     #Ausblick
 
+
+
     for x in query_set:
-        query= x.content
+
+        company = companyname
+        test = "test {}test"
+        test= test.format(company)
+    
+        query= str(x.content)
+        query = query.format(company)
+    
+
         gsheetcell = x.gsheetcell
         res = rag_chain.invoke(query)
         wks.update_value( gsheetcell, res.content)
@@ -93,6 +103,3 @@ def Createsummary(settings, query_set):
     return "Summary created"
 
     #Incomestatement
-
-
-
