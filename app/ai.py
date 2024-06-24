@@ -87,11 +87,7 @@ def Createsummary(settings, query_set):
 
 
     for x in query_set:
-
         company = companyname
-        test = "test {}test"
-        test= test.format(company)
-    
         query= str(x.content)
         query = query.format(company)
     
