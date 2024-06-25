@@ -18,7 +18,7 @@ class EditQueryForm(FlaskForm):
 
 
 class ChatForm(FlaskForm):
-    query = StringField('Chat')
+    query = StringField('Chat' )
     submit = SubmitField('Submit')
 
 class EditSettingsForm(FlaskForm):
