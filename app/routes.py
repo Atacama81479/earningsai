@@ -1,8 +1,8 @@
 from flask import render_template, flash
 from app import app
-from app.forms import AddQueryForm, EditQueryForm, EditSettingsForm
-from app.ai  import Createsummary
-from app.models import Prompts, SummarySettings
+from app.forms import AddQueryForm, EditQueryForm, EditSettingsForm, ChatForm
+from app.ai  import Createsummary, askchat
+from app.models import Prompts, SummarySettings, ChatAnswer
 from app import db
 import json
 
@@ -49,6 +49,20 @@ def createsummary():
     return render_template('createsummary.html', settings=settings)
 
 
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+    form = ChatForm()
+    settings= SummarySettings.query.filter_by(id=1).first_or_404()
+    res= ChatAnswer
+    if form.validate_on_submit():
+        query = form.query.data
+        print(query)
+        answer = askchat(settings, query)
+        print(answer)
+        res.content = answer.content
+        
+    return render_template('chat.html', settings=settings, form = form, res = res)
+
 
 
 
@@ -79,6 +93,5 @@ def updatesettings():
         settings.rag_prompt = form.RAG_Prompt.data
 
         db.session.commit()
-        flash('Your changes have been saved.')
 
     return render_template('updatesettings.html', settings=settings, form = form)

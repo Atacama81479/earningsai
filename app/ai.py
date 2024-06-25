@@ -99,3 +99,62 @@ def Createsummary(settings, query_set):
     return "Summary created"
 
     #Incomestatement
+
+
+
+def askchat(settings, query):
+    load_dotenv()
+    indexname = settings.indexname
+    companyname = settings.companyname
+    rag_promt = settings.rag_prompt
+    embeddingmodell = settings.embedding
+    llmmodell = settings.llm
+
+    query= str(query)
+    query = query.format(companyname)
+
+
+    def format_docs(docs):
+        return "\n\n".join(doc.page_content for doc in docs)
+
+
+
+
+    embeddings = OpenAIEmbeddings(model= embeddingmodell)
+    llm = ChatOpenAI(model= llmmodell)
+
+    print(settings.companyname)
+
+
+    vectorstore = PineconeVectorStore(index_name= indexname, embedding=embeddings)
+
+
+
+                
+    template =  """
+    """+ rag_promt+"""
+
+    {context}
+
+    Question: {question}
+
+    Helpful Answer:
+    """
+    custom_rag_prompt = PromptTemplate.from_template(template)
+
+    rag_chain = ( 
+        {"context": vectorstore.as_retriever() | format_docs, "question": RunnablePassthrough()} 
+        | custom_rag_prompt
+        | llm
+    )
+
+
+
+    print(query)
+
+    res = rag_chain.invoke(query)
+
+    print(res)
+
+    return res
+    

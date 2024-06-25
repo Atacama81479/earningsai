@@ -16,6 +16,11 @@ class EditQueryForm(FlaskForm):
     cell = StringField('Edit Spread Cell')
     submit = SubmitField('Submit')
 
+
+class ChatForm(FlaskForm):
+    query = StringField('Chat')
+    submit = SubmitField('Submit')
+
 class EditSettingsForm(FlaskForm):
     companyname = StringField('Edit Company Name')
     gsheetname = StringField('Edit Sheet Name')

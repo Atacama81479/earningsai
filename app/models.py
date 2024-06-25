@@ -16,3 +16,8 @@ class SummarySettings(db.Model):
     llm = db.Column(db.String(400), nullable=False)
     embedding = db.Column(db.String(400), nullable=False)
     rag_prompt = db.Column(db.String(400), nullable=False)
+
+class ChatAnswer():
+    content = ""
+    context =[]
+    value =""
