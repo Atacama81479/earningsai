@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form, render_field %}
+{% block content %}
+
+
+      <h1 class="pt-5 pb-2">EarningsAI</h1>
+
+      <p class="lead">This is the Summary settings page where the summary can be managed </p>
+
+      <hr>
+
+          <div>
+<table id="data" class="table table-striped">
+    <thead>
+        <tr>
+            <td>Company Name</td>
+            <td>Spreadsheet Name</td>
+            <td>Sheet Number</td>
+            <td>Pinecone Index Name</td>
+            <td>LLM Modell</td>
+            <td>Embedding Modell</td>
+            <td>RAG Prompt</td>
+        </tr>
+    </thead>
+<tbody>
+
+    <tr>
+        <td>{{settings.companyname}}</td>
+        <td>{{settings.gsheetname}}</td>
+        <td>{{settings.gsheetno}}</td>
+        <td>{{settings.indexname}}</td>
+        <td>{{settings.llm}}</td>
+        <td>{{settings.embedding}}</td>
+        <td></td>
+        <td><a href='/editsettings' > 
+            <button class="GFG"> 
+                Update Settings 
+            </button> 
+        </a></td>
+    </tr>
+
+</tbody>
+</table>
+
+
+</div>
+<div class="row">
+    <div class="col-md-4">
+        {{ render_form(form)}}
+    </div>
+</div>
+
+<a href= "/" > 
+    <button class="GFG"> 
+     Zurück
+    </button> 
+</a>
+
+<h2>Antwort</h2>
+<p>{{res.content}}</p>
+  </div>
+{% endblock %}

@@ -1,7 +1,7 @@
 from flask import render_template, flash
 from app import app
 from app.forms import AddQueryForm, EditQueryForm, EditSettingsForm, ChatForm
-from app.ai  import Createsummary, askchat
+from app.ai  import Createsummary, askchat, askchat2
 from app.models import Prompts, SummarySettings, ChatAnswer
 from app import db
 import json
@@ -58,6 +58,20 @@ def chat():
         query = form.query.data
         print(query)
         answer = askchat(settings, query)
+        print(answer)
+        res.content = answer.content
+        
+    return render_template('chat.html', settings=settings, form = form, res = res)
+
+@app.route('/chat2', methods=['GET', 'POST'])
+def chat2():
+    form = ChatForm()
+    settings= SummarySettings.query.filter_by(id=1).first_or_404()
+    res= ChatAnswer
+    if form.validate_on_submit():
+        query = form.query.data
+        print(query)
+        answer = askchat2(settings, query)
         print(answer)
         res.content = answer.content
         
