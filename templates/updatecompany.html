@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form, render_field %}
+{% block content %}
+
+
+      <h1 class="pt-5 pb-2">Edit Settings</h1>
+
+      <p class="lead">Here you can edit the prompt </p>
+
+      <hr>
+          <div>
+            <table id="data" class="table table-striped">
+                <thead>
+                    <tr>
+                        <td>Company 1; summary + single chat </td>
+                        <td>Company 2</td>
+                        <td>Company 3 </td>
+                    </tr>
+                </thead>
+            <tbody>
+        
+                <tr>
+                    <td>{{settings.companyname}}</td>
+                    <td>{{settings.companyname2}}</td>
+                    <td>{{settings.companyname3}}</td>
+                </tr>
+            
+            </tbody>
+        </table>
+
+        <div class="row">
+            <div class="col-md-4">
+                {{ render_form(form)}}
+            </div>
+        </div>
+        
+        <a href= "/" > 
+            <button class="GFG"> 
+             Zurück
+            </button>
+        </a>
+        <a href= "/addcompany" > 
+            <button class="GFG"> 
+             Add a Company
+            </button>
+        </a>
+          </div>
+
+      {% endblock %}
+
+      

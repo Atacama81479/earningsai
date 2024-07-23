@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form, render_field %}
+{% block content %}
+
+
+      <h1 class="pt-5 pb-2">EarningsAI</h1>
+
+      <p class="lead">This is the backoffice settings page where the queries can be managed </p>
+
+      <hr>
+      <div class="row">
+        <div class="col-md-4">
+            {{ render_form(form)}}
+        </div>
+    </div>
+    <a href= "/" > 
+        <button class="GFG"> 
+         Zurück
+        </button> 
+    </a>
+
+      {% endblock %}

@@ -1,10 +1,11 @@
 from flask import render_template, flash
 from app import app
-from app.forms import AddQueryForm, EditQueryForm, EditSettingsForm, ChatForm
+from app.forms import AddQueryForm, EditQueryForm, EditSettingsForm, ChatForm,MultipleChatForm, EditCompanynameForm, AddCompanynameForm
 from app.ai  import Createsummary, askchat, askchat2
-from app.models import Prompts, SummarySettings, ChatAnswer
+from app.models import Prompts, SummarySettings, ChatAnswer, CompanyNames
 from app import db
 import json
+import random
 
 @app.route("/hello")
 def hello_world():
@@ -46,7 +47,8 @@ def editprompt(id):
 @app.route('/', methods=['GET', 'POST'])
 def createsummary():
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
-    return render_template('createsummary.html', settings=settings)
+    companynames = CompanyNames.query.all()
+    return render_template('createsummary.html', settings=settings, companynames =companynames)
 
 
 @app.route('/chat', methods=['GET', 'POST'])
@@ -65,14 +67,14 @@ def chat():
 
 @app.route('/chat2', methods=['GET', 'POST'])
 def chat2():
-    form = ChatForm()
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
+    form = MultipleChatForm()
+    
     res= ChatAnswer
+
     if form.validate_on_submit():
         query = form.query.data
-        print(query)
         answer = askchat2(settings, query)
-        print(answer)
         res.content = answer.content
         
     return render_template('chat.html', settings=settings, form = form, res = res)
@@ -109,3 +111,41 @@ def updatesettings():
         db.session.commit()
 
     return render_template('updatesettings.html', settings=settings, form = form)
+
+@app.route('/updatecompanies', methods=['GET', 'POST'])
+def updatecompanyname():
+    company_names= CompanyNames.query.all()
+    cn=[]
+    for x in company_names:
+        cn.append(x.namespace_name)
+
+    form = EditCompanynameForm()
+    form.companyname.choices = cn
+    form.companyname2.choices = cn
+    form.companyname3.choices = cn
+
+   
+    settings= SummarySettings.query.filter_by(id=1).first_or_404()
+
+    if form.validate_on_submit():
+        settings.companyname = form.companyname.data
+        settings.companyname2 = form.companyname2.data
+        settings.companyname3 = form.companyname3.data
+
+        db.session.commit()
+
+    return render_template('updatecompany.html', settings=settings, form =form)
+
+@app.route('/addcompany', methods=['GET', 'POST'])
+def addcompany():
+    form = AddCompanynameForm()
+
+    if form.validate_on_submit():
+        uid = random.randint(0,500)
+        newCompany = CompanyNames(id = uid,
+                      name=form.companyname.data,
+                      namespace_name=form.namespace_name.data)
+        db.session.add(newCompany)
+        db.session.commit()
+
+    return render_template('addcompany.html', form =form)

@@ -2,12 +2,12 @@ from flask import Flask
 from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap4
 from sqlalchemy import inspect
 
 app = Flask (__name__ ,template_folder='../templates')
 
-bootstrap= Bootstrap(app)
+bootstrap= Bootstrap4(app)
 
 app.config.from_object(Config)
 db = SQLAlchemy(app)

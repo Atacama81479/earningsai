@@ -206,4 +206,14 @@ Helpful answer: """
 
     return res
 
-
+###def getnamespaces(settings):
+    load_dotenv()
+    indexname = settings.indexname
+ 
+    embeddings = OpenAIEmbeddings(model= "embeddingmodell")
+    vectorstore = PineconeVectorStore(index_name= indexname, embedding=embeddings)
+    namespaces =  vectorstore.describe_index_stats()
+    
+   
+    print(namespaces)
+###

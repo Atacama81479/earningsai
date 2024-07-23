@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField
+from wtforms import StringField, SubmitField, IntegerField, SelectField
 from wtforms. validators import DataRequired, Length
 
 
@@ -18,7 +18,11 @@ class EditQueryForm(FlaskForm):
 
 
 class ChatForm(FlaskForm):
-    query = StringField('Chat' )
+    query = StringField('Chat')
+    submit = SubmitField('Submit')
+
+class MultipleChatForm(FlaskForm):
+    query = StringField('Chat')
     submit = SubmitField('Submit')
 
 class EditSettingsForm(FlaskForm):
@@ -29,4 +33,15 @@ class EditSettingsForm(FlaskForm):
     llm = StringField('OpenAi Modell')
     embedding = StringField('OpenAi Embedding')
     RAG_Prompt = StringField('RAG Prompt')
+    submit = SubmitField('Submit')
+
+class EditCompanynameForm(FlaskForm):
+    companyname = SelectField(u'Company 1', validate_choice=False)
+    companyname2 = SelectField(u'Company 2', validate_choice=False)
+    companyname3 = SelectField(u'Company 3', validate_choice=False)
+    submit = SubmitField('Submit')
+
+class AddCompanynameForm(FlaskForm):
+    companyname = StringField('Company Name')
+    namespace_name = StringField('Namespace Name')
     submit = SubmitField('Submit')
