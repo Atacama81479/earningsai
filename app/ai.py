@@ -94,6 +94,7 @@ def Createsummary(settings, query_set):
 
         gsheetcell = x.gsheetcell
         res = rag_chain.invoke(query)
+        print(res)
         wks.update_value( gsheetcell, res.content)
 
     return "Summary created"
