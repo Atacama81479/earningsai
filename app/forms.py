@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, SelectField
+from wtforms import StringField, SubmitField, IntegerField, SelectField, FileField
 from wtforms. validators import DataRequired, Length
 
 
@@ -44,4 +44,12 @@ class EditCompanynameForm(FlaskForm):
 class AddCompanynameForm(FlaskForm):
     companyname = StringField('Company Name')
     namespace_name = StringField('Namespace Name')
+    submit = SubmitField('Submit')
+
+class AddCompanyData(FlaskForm):
+    presentation = FileField('Earnings Presentation')
+    press_release = FileField('Earnings Press Release')
+    konsens = FileField('Company Konsens Data')
+    isin = StringField('Company ISIN')
+    company_name  = StringField('Company Name')
     submit = SubmitField('Submit')

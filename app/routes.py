@@ -1,11 +1,14 @@
 from flask import render_template, flash
 from app import app
-from app.forms import AddQueryForm, EditQueryForm, EditSettingsForm, ChatForm,MultipleChatForm, EditCompanynameForm, AddCompanynameForm
+from app.forms import AddQueryForm, EditQueryForm, EditSettingsForm, ChatForm,MultipleChatForm, EditCompanynameForm, AddCompanynameForm, AddCompanyData
 from app.ai  import Createsummary, askchat, askchat2
 from app.models import Prompts, SummarySettings, ChatAnswer, CompanyNames
 from app import db
+from app.dataupload import companyfileupload,store_pdf_from_variable
 import json
 import random
+import uuid
+import tempfile
 
 @app.route("/hello")
 def hello_world():
@@ -87,8 +90,6 @@ def created():
     query_set= Prompts.query.all()
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
 
-    print(settings)
-    print(query_set)
     Createsummary(settings, query_set)
     print("Summary created successful")
     return render_template('created.html')
@@ -141,11 +142,37 @@ def addcompany():
     form = AddCompanynameForm()
 
     if form.validate_on_submit():
-        uid = random.randint(0,500)
+        uid = uuid.uuid1()
         newCompany = CompanyNames(id = uid,
                       name=form.companyname.data,
                       namespace_name=form.namespace_name.data)
         db.session.add(newCompany)
         db.session.commit()
+
+    return render_template('addcompany.html', form =form)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    form = AddCompanyData()
+    settings= SummarySettings.query.filter_by(id=1).first_or_404()
+
+    if form.validate_on_submit():
+        uid = uuid.uuid1()
+        presentation=form.presentation.data
+        pressrelease=form.press_release.data
+        konsens=form.konsens.data
+        isin=form.isin.data
+        company_name=form.company_name.data
+       
+        
+        presentation_path=store_pdf_from_variable(presentation)
+        companyfileupload(presentation_path,settings,isin,company_name)
+
+        pressrelease_path=store_pdf_from_variable(pressrelease)
+        companyfileupload(pressrelease_path,settings,isin,company_name)
+
+        if konsens is not None:
+         konsens_path=store_pdf_from_variable(konsens)
+         companyfileupload(konsens_path,settings,isin,company_name)
 
     return render_template('addcompany.html', form =form)
