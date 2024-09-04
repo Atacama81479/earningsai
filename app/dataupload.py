@@ -1,13 +1,15 @@
 import os
 import re
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 import tempfile
 from pinecone import Pinecone, ServerlessSpec
 
-    
+
 
 
 def companyfileupload(path,settings,isin,company_name):
@@ -15,12 +17,11 @@ def companyfileupload(path,settings,isin,company_name):
     indexname = settings.indexname
     embeddingmodell = settings.embedding
     llmmodell = settings.llm
-    
+    name = company_name
     # Initialize OpenAI
-    openai.api_key = os.getenv('OPENAI_API_KEY')
     MODEL = embeddingmodell
 
-    
+
 
     # Initialize Pinecone
     pc = Pinecone(
@@ -55,13 +56,13 @@ def companyfileupload(path,settings,isin,company_name):
     def create_embeddings(texts):
         embeddings_list = []
         for text in texts:
-            res = openai.Embedding.create(input=[text], engine=MODEL)
-            embeddings_list.append(res['data'][0]['embedding'])
+            res = client.embeddings.create(input=[text], model=MODEL)
+            embeddings_list.append(res.data[0].embedding)
         return embeddings_list
 
     # Define a function to upsert embeddings to Pinecone
-    def upsert_embeddings_to_pinecone(index, embeddings, ids):
-        index.upsert(vectors=[(id, embedding) for id, embedding in zip(ids, embeddings)])
+    def upsert_embeddings_to_pinecone(index, embeddings, ids, name):
+        index.upsert(vectors=[(id, embedding) for id, embedding in zip(ids, embeddings)], namespace=name )
 
     # Process a PDF and create embeddings
     file_path = path # Replace with your actual file path
@@ -69,7 +70,7 @@ def companyfileupload(path,settings,isin,company_name):
     embeddings = create_embeddings(texts)
 
     # Upsert the embeddings to Pinecone
-    upsert_embeddings_to_pinecone(index, embeddings, [file_path])
+    upsert_embeddings_to_pinecone(index, embeddings, [file_path], name)
 
 def store_pdf_from_variable(filestorage):
     # Create a temporary file to store the PDF
@@ -79,7 +80,7 @@ def store_pdf_from_variable(filestorage):
         temp_file_path = temp_file.name 
 
     return(temp_file_path)
-    
+
     # Use the temporary file as needed
     # ...
 
