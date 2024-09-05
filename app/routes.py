@@ -142,9 +142,10 @@ def addcompany():
     form = AddCompanynameForm()
 
     if form.validate_on_submit():
-        uid = uuid.uuid1()
+        uid = str(uuid.uuid1())
         newCompany = CompanyNames(id = uid,
                       name=form.companyname.data,
+                      isin = form.isin.data,
                       namespace_name=form.namespace_name.data)
         db.session.add(newCompany)
         db.session.commit()
@@ -157,13 +158,12 @@ def upload():
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
 
     if form.validate_on_submit():
-        uid = uuid.uuid1()
         presentation=form.presentation.data
         pressrelease=form.press_release.data
         konsens=form.konsens.data
         isin=form.isin.data
         company_name=form.company_name.data
-       
+        uid = str(uuid.uuid1())
         
         presentation_path=store_pdf_from_variable(presentation)
         companyfileupload(presentation_path,settings,isin,company_name)
@@ -174,5 +174,13 @@ def upload():
         if konsens is not None:
          konsens_path=store_pdf_from_variable(konsens)
          companyfileupload(konsens_path,settings,isin,company_name)
+
+        
+        newCompany = CompanyNames(id=uid,
+                      name=company_name,
+                      isin=isin,
+                      namespace_name=company_name)
+        db.session.add(newCompany)
+        db.session.commit()
 
     return render_template('addcompany.html', form =form)

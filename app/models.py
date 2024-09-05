@@ -7,13 +7,15 @@ class Prompts(db.Model):
     gsheetcell = db.Column(db.String(400), nullable=False)
 
 class CompanyNames(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
+    isin = db.Column(db.String(80), nullable=False)
     namespace_name = db.Column(db.String(80), nullable=False)
 
-    def __init__(self, id, name, namespace_name):
+    def __init__(self, id, name, isin, namespace_name):
         self.id = id
         self.name = name
+        self.isin = isin
         self.namespace_name = namespace_name
 
 

@@ -12,8 +12,8 @@ class AddQueryForm(FlaskForm):
 
 
 class EditQueryForm(FlaskForm):
-    querycontent = StringField('Edit Prompt Query')
-    cell = StringField('Edit Spread Cell')
+    querycontent = StringField('Prompt Query')
+    cell = StringField('Spread Cell')
     submit = SubmitField('Submit')
 
 
@@ -26,10 +26,10 @@ class MultipleChatForm(FlaskForm):
     submit = SubmitField('Submit')
 
 class EditSettingsForm(FlaskForm):
-    companyname = StringField('Edit Company Name')
-    gsheetname = StringField('Edit Sheet Name')
-    gsheetno = StringField('Edit Sheet Number')
-    indexname = StringField('Edit Pinecone Index Name')
+    companyname = StringField('Company Name')
+    gsheetname = StringField('Sheet Name')
+    gsheetno = StringField('Sheet Number')
+    indexname = StringField('Pinecone Index Name')
     llm = StringField('OpenAi Modell')
     embedding = StringField('OpenAi Embedding')
     RAG_Prompt = StringField('RAG Prompt')
@@ -43,6 +43,7 @@ class EditCompanynameForm(FlaskForm):
 
 class AddCompanynameForm(FlaskForm):
     companyname = StringField('Company Name')
+    isin = StringField('Company ISIN')
     namespace_name = StringField('Namespace Name')
     submit = SubmitField('Submit')
 

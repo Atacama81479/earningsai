@@ -1,9 +1,10 @@
 import os
 import re
 from openai import OpenAI
+import uuid
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 import tempfile
@@ -46,10 +47,11 @@ def companyfileupload(path,settings,isin,company_name):
         # load your data
         data = loader.load()
         # Split your data up into smaller documents with Chunks
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1800, chunk_overlap=50)
         documents = text_splitter.split_documents(data)
         # Convert Document objects into strings
         texts = [str(doc) for doc in documents]
+        print(f"Number of text chunks created: {len(texts)}") 
         return texts
 
     # Define a function to create embeddings
@@ -61,7 +63,9 @@ def companyfileupload(path,settings,isin,company_name):
         return embeddings_list
 
     # Define a function to upsert embeddings to Pinecone
-    def upsert_embeddings_to_pinecone(index, embeddings, ids, name):
+    def upsert_embeddings_to_pinecone(index, embeddings, name):
+        unique_id = str(uuid.uuid4())
+        ids = [f"{name}_{unique_id}_{i}" for i in range(len(embeddings))]
         index.upsert(vectors=[(id, embedding) for id, embedding in zip(ids, embeddings)], namespace=name )
 
     # Process a PDF and create embeddings
@@ -70,7 +74,11 @@ def companyfileupload(path,settings,isin,company_name):
     embeddings = create_embeddings(texts)
 
     # Upsert the embeddings to Pinecone
-    upsert_embeddings_to_pinecone(index, embeddings, [file_path], name)
+    upsert_embeddings_to_pinecone(index, embeddings, name)
+    print(f"Number of text chunks upserted: {len(embeddings)}") 
+
+    os.remove(path)
+    print(f'Temporary PDF deleted: {path}')
 
 def store_pdf_from_variable(filestorage):
     # Create a temporary file to store the PDF
@@ -80,13 +88,4 @@ def store_pdf_from_variable(filestorage):
         temp_file_path = temp_file.name 
 
     return(temp_file_path)
-
-    # Use the temporary file as needed
-    # ...
-
-    # Clean up the temporary file when done
-#  os.remove(temp_file_path)
-#  print(f'Temporary PDF deleted: {temp_file_path}')
-
-# Example usage
 
