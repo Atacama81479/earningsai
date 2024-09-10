@@ -35,21 +35,11 @@ def companyfileupload(path,settings,isin,company_name):
     # Instantiate the index
     index = pc.Index(index_name)
 
-    # Define a function to preprocess text
-    def preprocess_text(text):
-        # Replace consecutive spaces, newlines and tabs
-        text = re.sub(r'\s+', ' ', text)
-        return text
-
     def process_pdf(file_path):
-        # create a loader
         loader = PyPDFLoader(file_path)
-        # load your data
         data = loader.load()
-        # Split your data up into smaller documents with Chunks
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1800, chunk_overlap=50)
         documents = text_splitter.split_documents(data)
-        # Convert Document objects into strings
         texts = [str(doc) for doc in documents]
         print(f"Number of text chunks created: {len(texts)}") 
         return texts
@@ -63,18 +53,18 @@ def companyfileupload(path,settings,isin,company_name):
         return embeddings_list
 
     # Define a function to upsert embeddings to Pinecone
-    def upsert_embeddings_to_pinecone(index, embeddings, name):
+    def upsert_embeddings_to_pinecone(index, embeddings, name, metadata):
         unique_id = str(uuid.uuid4())
         ids = [f"{name}_{unique_id}_{i}" for i in range(len(embeddings))]
-        index.upsert(vectors=[(id, embedding) for id, embedding in zip(ids, embeddings)], namespace=name )
+        index.upsert(vectors=[(id, embedding, meta) for id, embedding, meta in zip(ids, embeddings, metadata)], namespace=name )
 
-    # Process a PDF and create embeddings
-    file_path = path # Replace with your actual file path
+    file_path = path #
     texts = process_pdf(file_path)
     embeddings = create_embeddings(texts)
+    metadata = [{"text": text} for text in texts]
 
     # Upsert the embeddings to Pinecone
-    upsert_embeddings_to_pinecone(index, embeddings, name)
+    upsert_embeddings_to_pinecone(index, embeddings, name, metadata)
     print(f"Number of text chunks upserted: {len(embeddings)}") 
 
     os.remove(path)
