@@ -10,17 +10,18 @@ import random
 import uuid
 import tempfile
 
+
+#test route
 @app.route("/hello")
 def hello_world():
 
     return render_template('base.html')
 
 
-
+#promptoverview
 @app.route('/edit', methods=['GET', 'POST'])
 def edit():
 
-    print("YES")
     all_prompts=Prompts.query.all()
 
     form = EditQueryForm()
@@ -28,11 +29,9 @@ def edit():
     return render_template('edit.html', form=form, all_prompts=all_prompts)
 
 
-
+#singlepromptedit
 @app.route('/edit/<id>', methods=['GET', 'POST'])
 def editprompt(id):
-
-    print("this is the ID"+ id)
     prompt = Prompts.query.filter_by(id=id).first_or_404()
     form = EditQueryForm()
 
@@ -47,13 +46,15 @@ def editprompt(id):
 
     return render_template('editprompt.html', form=form, prompt=prompt)
 
+
+#home
 @app.route('/', methods=['GET', 'POST'])
 def createsummary():
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
     companynames = CompanyNames.query.all()
     return render_template('createsummary.html', settings=settings, companynames =companynames)
 
-
+#chatwithrag
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
     form = ChatForm()
@@ -68,6 +69,8 @@ def chat():
         
     return render_template('chat.html', settings=settings, form = form, res = res)
 
+
+#chatwithoutrag
 @app.route('/chat2', methods=['GET', 'POST'])
 def chat2():
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
@@ -84,17 +87,16 @@ def chat2():
 
 
 
-
+#createsummary/created
 @app.route('/created', methods=['GET', 'POST'])
 def created():
     query_set= Prompts.query.all()
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
 
     Createsummary(settings, query_set)
-    print("Summary created successful")
     return render_template('created.html')
 
-
+#editallsettings
 @app.route('/editsettings', methods=['GET', 'POST'])
 def updatesettings():
     settings= SummarySettings.query.filter_by(id=1).first_or_404()
@@ -113,6 +115,7 @@ def updatesettings():
 
     return render_template('updatesettings.html', settings=settings, form = form)
 
+#updatecompnies
 @app.route('/updatecompanies', methods=['GET', 'POST'])
 def updatecompanyname():
     company_names= CompanyNames.query.all()
@@ -137,6 +140,7 @@ def updatecompanyname():
 
     return render_template('updatecompany.html', settings=settings, form =form)
 
+#addacompany
 @app.route('/addcompany', methods=['GET', 'POST'])
 def addcompany():
     form = AddCompanynameForm()
@@ -152,6 +156,8 @@ def addcompany():
 
     return render_template('addcompany.html', form =form)
 
+
+#uploadnewdocuments
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     form = AddCompanyData()

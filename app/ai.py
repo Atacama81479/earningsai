@@ -31,35 +31,23 @@ def Createsummary(settings, query_set):
         return "\n\n".join(doc.page_content for doc in docs)
 
 
-    print("Retrieving...")
-
+    
+    ##OpenAI Setup
     embeddings = OpenAIEmbeddings(model= embeddingmodell)
     llm = ChatOpenAI(model= llmmodell)
 
-    print(settings)
-    
-    
-    print(gsheetname) 
 
-    print("Testing LLM...")
-    query = "how was q1 of alfen?"
-    chain = PromptTemplate.from_template(template=query) | llm
-    result = chain.invoke(input = {})
-
-
-    print("setting up Vectorstore...")
+    ##Vectorstore Setup
     vectorstore = PineconeVectorStore(index_name= indexname, embedding=embeddings, namespace=companyname)
 
-    print("connect with google...")
+    ##GSheet Setup
     gc = pygsheets.authorize(service_file= Gcredentialpath)
     sheet= gc.open(gsheetname)
-
-
     wks = sheet[gsheetnr]
     
 
-    print("creating rag_chain...")
-                
+    
+    ##RAG Chain creation            
     template =  """
     """+ rag_promt+"""
 
@@ -82,10 +70,6 @@ def Createsummary(settings, query_set):
     
     print("creating Summary...")
 
-    #Ausblick
-
-
-
     for x in query_set:
         company = companyname
         query= str(x.content)
@@ -99,10 +83,8 @@ def Createsummary(settings, query_set):
 
     return "Summary created"
 
-    #Incomestatement
 
-
-
+## function to query openAI per chat input
 def askchat(settings, query):
     load_dotenv()
     indexname = settings.indexname
@@ -159,62 +141,22 @@ def askchat(settings, query):
 
     return res
 
+
+## function to query openAI per chat input without RAG
 def askchat2(settings, query):
     load_dotenv()
     indexname = settings.indexname
     companyname = settings.companyname
-    rag_promt = settings.rag_prompt
     embeddingmodell = settings.embedding
     llmmodell = settings.llm
-    context = str(""" """)
-
-
-
-   
-
-    def fullcontext():
-        return context
     query= str(query)
     query = query.format(companyname)
 
-
-    def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
-
-
-
-
-    embeddings = OpenAIEmbeddings(model= embeddingmodell)
-    llm = ChatOpenAI(model= llmmodell)
-
-    print(settings.companyname)
-
-
-    vectorstore = PineconeVectorStore(index_name= indexname, embedding=embeddings, namespace=companyname)
-                
-    fullquery =  """Use the following pieces of context to answer the question at the end. If you dont know the answer just say that you dont know it, dont try to make up an answer. If the question is empty just provide a empty string, dont guess. Act as a financial analyst providing concise valuable information to the portfolio manager. pay high attention to thruth of every information in the answer, if you are not sure better leave it out. double check the answer for any false information. """+ query+""" 
-    """+ context + """ 
-    Question:"""+query+""" 
-Helpful answer: """
-
+    llm = ChatOpenAI(model= llmmodell)   
     
-
-
+             
+    fullquery = query+""" Helpful answer: """
     chain = PromptTemplate.from_template(template=fullquery) | llm
     res = chain.invoke(input = {})
 
-    print(res)
-
     return res
-
-###def getnamespaces(settings):
-    load_dotenv()
-    indexname = settings.indexname
- 
-    embeddings = OpenAIEmbeddings(model= "embeddingmodell")
-    vectorstore = PineconeVectorStore(index_name= indexname, embedding=embeddings)
-    namespaces =  vectorstore.describe_index_stats()
-    
-   
-    print(namespaces)
-###

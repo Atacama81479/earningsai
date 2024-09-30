@@ -2,7 +2,6 @@ import os
 import re
 from openai import OpenAI
 import uuid
-
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -13,12 +12,13 @@ from pinecone import Pinecone, ServerlessSpec
 
 
 
-def companyfileupload(path,settings,isin,company_name):
+def companyfileupload(path,settings,company_name):
     load_dotenv()
     indexname = settings.indexname
     embeddingmodell = settings.embedding
-    llmmodell = settings.llm
     name = company_name
+
+
     # Initialize OpenAI
     MODEL = embeddingmodell
 
@@ -29,7 +29,6 @@ def companyfileupload(path,settings,isin,company_name):
         api_key=os.environ.get("PINECONE_API_KEY")
     )
 
-    # Define the index name
     index_name = indexname
 
     # Instantiate the index
